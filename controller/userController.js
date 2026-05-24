@@ -2,68 +2,68 @@ const db = require('../config/db')
 
 exports.createUser = async (req, res) => {
 
-try {
+  try {
 
-const {
-  name,
-  mobile,
-  weight,
-  feet,
-  inch,
-  record_date
-} = req.body;
+    const {
+      name,
+      mobile,
+      weight,
+      feet,
+      inch,
+      record_date
+    } = req.body;
+    console.log(res.body);
+    const [checkUser] = await db.execute(
+      "SELECT * FROM users WHERE mobile=?",
+      [mobile]
+    );
 
-const [checkUser] = await db.execute(
-  "SELECT * FROM users WHERE mobile=?",
-  [mobile]
-);
+    if (checkUser.length > 0) {
 
-if(checkUser.length > 0){
+      return res.status(400).json({
+        success: false,
+        message: "Mobile already exists"
+      });
+    }
 
-  return res.status(400).json({
-    success:false,
-    message:"Mobile already exists"
-  });
-}
-
-const insertUserSql = `
+    const insertUserSql = `
 INSERT INTO users(name,mobile)
 VALUES(?,?)
 `;
 
-const [userResult] = await db.execute(
-  insertUserSql,
-  [name,mobile]
-);
+    const [userResult] = await db.execute(
+      insertUserSql,
+      [name, mobile]
+    );
 
-const userId = userResult.insertId;
+    const userId = userResult.insertId;
 
-const totalInch = (feet * 12) + inch;
+    const totalInch = (feet * 12) + inch;
 
-const heightInCm = totalInch * 2.54;
+    const heightInCm = totalInch * 2.54;
 
-const heightMeter = heightInCm / 100;
+    const heightMeter = heightInCm / 100;
 
-const bmi = (
-  weight / (heightMeter * heightMeter)
-).toFixed(2);
+    const bmi = (
+      weight / (heightMeter * heightMeter)
+    ).toFixed(2);
 
-let bmiStatus = "";
+    let bmiStatus = "";
 
-if(bmi < 18.5){
-  bmiStatus = "UnderWeight";
-}
-else if(bmi < 25){
-  bmiStatus = "Normal";
-}
-else if(bmi < 30){
-  bmiStatus = "OverWeight";
-}
-else{
-  bmiStatus = "Obese";
-}
+    if (bmi < 18.5) {
+      bmiStatus = "UnderWeight";
+    }
+    else if (bmi < 25) {
+      bmiStatus = "Normal";
+    }
+    else if (bmi < 30) {
+      bmiStatus = "OverWeight";
+    }
+    else {
+      bmiStatus = "Obese";
+    }
 
-const recordSql = `
+    const recordSql = `
 INSERT INTO bmi_records
 (
 user_id,
@@ -78,62 +78,62 @@ record_date
 VALUES(?,?,?,?,?,?,?,?)
 `;
 
-await db.execute(recordSql,[
-  userId,
-  weight,
-  feet,
-  inch,
-  heightInCm,
-  bmi,
-  bmiStatus,
-  record_date
-]);
+    await db.execute(recordSql, [
+      userId,
+      weight,
+      feet,
+      inch,
+      heightInCm,
+      bmi,
+      bmiStatus,
+      record_date
+    ]);
 
-return res.status(200).json({
-  success:true,
-  message:"User Created",
-  bmi,
-  bmiStatus
-});
+    return res.status(200).json({
+      success: true,
+      message: "User Created",
+      bmi,
+      bmiStatus
+    });
 
-}
-catch(err){
+  }
+  catch (err) {
 
-console.log(err);
+    console.log(err);
 
-return res.status(500).json({
-  success:false,
-  message:"Internal Server Error"
-});
-}
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error"
+    });
+  }
 }
 
 exports.addBmiRecord = async (req, res) => {
 
-try {
+  try {
 
-const user_id = req.params.user_id;
+    const user_id = req.params.user_id;
 
-const {
-  weight,
-  feet,
-  inch,
-  record_date
-} = req.body;
+    const {
+      weight,
+      feet,
+      inch,
+      record_date
+    } = req.body;
 
-const [user] = await db.execute(
-  "SELECT * FROM users WHERE id=?",
-  [user_id]
-);
+    const [user] = await db.execute(
+      "SELECT * FROM users WHERE id=?",
+      [user_id]
+    );
 
-if(user.length === 0){
+    if (user.length === 0) {
 
-  return res.status(404).json({
-    success:false,
-    message:"User not found"
-  });
-}
-  const [already] = await db.execute(
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+    const [already] = await db.execute(
       'SELECT * FROM bmi_records WHERE user_id=? AND record_date=?',
       [user_id, record_date]
     );
@@ -144,32 +144,32 @@ if(user.length === 0){
         message: "BMI already added for this date"
       });
     }
-const totalInch = (feet * 12) + inch;
+    const totalInch = (feet * 12) + inch;
 
-const heightInCm = totalInch * 2.54;
+    const heightInCm = totalInch * 2.54;
 
-const heightMeter = heightInCm / 100;
+    const heightMeter = heightInCm / 100;
 
-const bmi = (
-  weight / (heightMeter * heightMeter)
-).toFixed(2);
+    const bmi = (
+      weight / (heightMeter * heightMeter)
+    ).toFixed(2);
 
-let bmiStatus = "";
+    let bmiStatus = "";
 
-if(bmi < 18.5){
-  bmiStatus = "UnderWeight";
-}
-else if(bmi < 25){
-  bmiStatus = "Normal";
-}
-else if(bmi < 30){
-  bmiStatus = "OverWeight";
-}
-else{
-  bmiStatus = "Obese";
-}
+    if (bmi < 18.5) {
+      bmiStatus = "UnderWeight";
+    }
+    else if (bmi < 25) {
+      bmiStatus = "Normal";
+    }
+    else if (bmi < 30) {
+      bmiStatus = "OverWeight";
+    }
+    else {
+      bmiStatus = "Obese";
+    }
 
-const sql = `
+    const sql = `
 INSERT INTO bmi_records
 (
 user_id,
@@ -184,39 +184,39 @@ record_date
 VALUES(?,?,?,?,?,?,?,?)
 `;
 
-await db.execute(sql,[
-  user_id,
-  weight,
-  feet,
-  inch,
-  heightInCm,
-  bmi,
-  bmiStatus,
-  record_date
-]);
+    await db.execute(sql, [
+      user_id,
+      weight,
+      feet,
+      inch,
+      heightInCm,
+      bmi,
+      bmiStatus,
+      record_date
+    ]);
 
-return res.status(200).json({
-  success:true,
-  message:"New BMI Record Added",
-  bmi,
-  bmiStatus
-});
+    return res.status(200).json({
+      success: true,
+      message: "New BMI Record Added",
+      bmi,
+      bmiStatus
+    });
 
+  }
+  catch (err) {
+
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error"
+    });
+  }
 }
-catch(err){
 
-console.log(err);
-
-return res.status(500).json({
-  success:false,
-  message:"Internal Server Error"
-});
-}
-}
-
-exports.getAllUser=async (req,res)=>{
-    try{
-        const sql=`SELECT
+exports.getAllUser = async (req, res) => {
+  try {
+    const sql = `SELECT
                        u.id,
                        u.name,
                        u.mobile,
@@ -234,69 +234,90 @@ exports.getAllUser=async (req,res)=>{
                        ORDER BY record_date DESC, id DESC
                        LIMIT 1
                    )`
-        const [userList]=await db.query(sql);
+    const [userList] = await db.query(sql);
 
-        console.log(userList)
-        if(userList.length===0){
-            return res.status(200).json({
-                success:false,
-                message:"Empty List"
-            })
-        }
-        return res.status(200).json({
-            success:true,
-            message:"Fetched Successfully",
-            data:userList
-        })
-        
-    }catch(err){
-        console.log(err)
-        return res.status(500).json({
-            success:false,
-            message:"Internal Server Error"
-        })
+    console.log(userList)
+    if (userList.length === 0) {
+      return res.status(200).json({
+        success: false,
+        message: "Empty List"
+      })
     }
+    return res.status(200).json({
+      success: true,
+      message: "Fetched Successfully",
+      data: userList
+    })
+
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error"
+    })
+  }
 }
 
-exports.updateUser=async(req,res)=>{
-try{
-const id = req.params.id
-const{name,mobile}=req.body;
-const sql ="select * from users where id =?";
-const [row]=await db.query(sql,[id]);
+exports.updateUser = async (req, res) => {
+  try {
+    const id = req.params.id
+    const { name, mobile } = req.body;
+    const sql = "select * from users where id =?";
+    const [row] = await db.query(sql, [id]);
 
-if(row.length===0){
-return res.status(400).json({
-success: false,
-message: "User not found"
-})
+    if (row.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found"
+      })
+    }
+
+    const checkSql = "Select * from users where mobile=? and id!=?";
+
+    const [checkNum] = await db.query(checkSql, [mobile, id]);
+    if (checkNum.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile number already exist"
+      })
+    }
+
+
+    const updatesql = "update users set name=? , mobile=? where id =?";
+    await db.execute(updatesql, [name, mobile, id]);
+
+    return res.status(200).json({
+      success: true,
+      message: "Updated"
+    })
+
+
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error"
+    })
+  }
 }
 
-const checkSql="Select * from users where mobile=? and id!=?";
+exports.deleteAllUser=async(req,res)=>{
+  try{
 
-const [checkNum]=await db.query(checkSql,[mobile,id]);
-if(checkNum.length>0)
-{
-return res.status(400).json({
-success:false,
-message:"Mobile number already exist"
-})
-}
+    const sql = "truncate table users"
 
+    await db.execute(sql);
 
-const updatesql = "update users set name=? , mobile=? where id =?";
-await db.execute(updatesql,[name,mobile,id]);
+    return res.status(200).json({
+      success:true,
+      message:"All User Deleted"
+    })
 
-return res.status(200).json({
-success:true,
-message:"Updated"
-})
-
-
-}catch(err){
-console.log(err)
-return res.status(500).json({
-success:false,
-message:"Internal Server Error"})
-}
+  }catch(err){
+    console.log(err)
+    return res.status(500).json({
+      success : false,
+      message : "Internal Server Error"
+    })
+  }
 }
