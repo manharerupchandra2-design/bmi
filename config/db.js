@@ -1,11 +1,18 @@
 const mysql = require('mysql2/promise')
 
-const db = mysql.createPool({
-    host:"localhost",
-    user:"root",
-    password:"Rup1432@",
-    database:"data"
-})
+const db = mysql.createPool(
+ process.env.MYSQL_URL
+);
+
+
+console.log("MYSQL URL =", process.env.MYSQL_URL);
+
+//const db = mysql.createPool({
+//    host:"localhost",
+//    user:"root",
+//    password:"Rup1432@",
+//    database:"data"
+//})
 
 async function checkDB(){
 try{
