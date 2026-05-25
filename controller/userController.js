@@ -209,7 +209,7 @@ VALUES(?,?,?,?,?,?,?,?)
 
     return res.status(500).json({
       success: false,
-      message: "Internal Server Error"
+      message: err
     });
   }
 }
@@ -320,4 +320,37 @@ exports.deleteAllUser=async(req,res)=>{
       message : "Internal Server Error"
     })
   }
+}
+
+
+exports.getHistory=async(res,req)=>{
+try{
+  const id = req.params.id;
+
+  const sql = `select u.id,u.name,b.weight,b.height_in_cm,b.bmi,b.bmi_status,b.record_date
+from users u left join bmi_records b on u.id=b.user_id
+where u.id=? order by record_date desc`;
+
+const [row]=await db.query(sql,[id])
+
+  console.log(row)
+    if (row.length === 0) {
+      return res.status(200).json({
+        success: false,
+        message: "Empty List"
+      })
+    }
+return res.status(200).json({
+  success:true,
+  message:"Data Got!!!",
+  data:row
+})
+
+}catch(err){
+  console.log(err);
+  return res.status(500).json({
+    success:false,
+    message:err
+  })
+}
 }
