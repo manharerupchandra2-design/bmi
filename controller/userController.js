@@ -323,7 +323,7 @@ exports.deleteAllUser=async(req,res)=>{
 }
 
 
-exports.getHistory=async(res,req)=>{
+exports.getHistory=async(req,res)=>{
 try{
   const id = req.params.id;
 
@@ -350,7 +350,7 @@ return res.status(200).json({
   console.log(err);
   return res.status(500).json({
     success:false,
-    message:err
+    message:err.message
   })
 }
 }

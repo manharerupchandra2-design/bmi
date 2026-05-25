@@ -7,12 +7,12 @@ const db = mysql.createPool(
 
 console.log("MYSQL URL =", process.env.MYSQL_URL);
 
-//const db = mysql.createPool({
+// const db = mysql.createPool({
 //    host:"localhost",
 //    user:"root",
 //    password:"Rup1432@",
 //    database:"data"
-//})
+// })
 
 async function checkDB(){
 try{
