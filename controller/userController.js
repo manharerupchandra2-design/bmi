@@ -333,33 +333,33 @@ return res.status(200).json({
 }
 }
 exports.deleteById = async (req, res) => {
-//   try {
+  try {
 
-//     const id = req.params.id;
+    const id = req.params.id;
 
-//     const sql = 'DELETE FROM bmi_records WHERE id = ?';
+    const sql = 'DELETE FROM bmi_records WHERE id = ?';
 
-//     const [result] = await db.execute(sql, [id]);
+    const [result] = await db.execute(sql, [id]);
 
-//     if (result.affectedRows === 0) {
-//       return res.status(404).json({
-//         success: false,
-//         message: 'Record not found'
-//       });
-//     }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Record not found'
+      });
+    }
 
-//     res.status(200).json({
-//       success: true,
-//       message: 'Deleted successfully'
-//     });
+    res.status(200).json({
+      success: true,
+      message: 'Deleted successfully'
+    });
 
-//   } catch (error) {
+  } catch (error) {
 
-//     console.log(error);
+    console.log(error);
 
-//     res.status(500).json({
-//       success: false,
-//       message: 'Internal server error'
-//     });
-//   }
-// };
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
