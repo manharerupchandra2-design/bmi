@@ -332,15 +332,34 @@ return res.status(200).json({
   })
 }
 }
+exports.deleteById = async (req, res) => {
+  try {
 
-exports.deleteById=async(req,res)=>{
-  const id = req.params.id;
+    const id = req.params.id;
 
-  const sql = 'delete from bmi_records where id = ?';
+    const sql = 'DELETE FROM bmi_records WHERE id = ?';
 
-  await db.execute(sql,[id]);
-  res.status(200).json({
-    success:true,
-    message:'deleted successfully'
-  })
-}
+    const [result] = await db.execute(sql, [id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Record not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Deleted successfully'
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
