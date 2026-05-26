@@ -332,7 +332,7 @@ return res.status(200).json({
   })
 }
 }
-// exports.deleteById = async (req, res) => {
+exports.deleteById = async (req, res) => {
 //   try {
 
 //     const id = req.params.id;
