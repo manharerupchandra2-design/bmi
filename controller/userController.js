@@ -301,28 +301,6 @@ exports.updateUser = async (req, res) => {
   }
 }
 
-exports.deleteAllUser=async(req,res)=>{
-  try{
-
-    const sql = "truncate table users"
-
-    await db.execute(sql);
-
-    return res.status(200).json({
-      success:true,
-      message:"All User Deleted"
-    })
-
-  }catch(err){
-    console.log(err)
-    return res.status(500).json({
-      success : false,
-      message : "Internal Server Error"
-    })
-  }
-}
-
-
 exports.getHistory=async(req,res)=>{
 try{
   const id = req.params.id;
@@ -353,4 +331,16 @@ return res.status(200).json({
     message:err.message
   })
 }
+}
+
+exports.deleteById=async(req,res)=>{
+  const id = req.params.id;
+
+  const sql = 'delete from bmi_records where id = ?';
+
+  await db.execute(sql,[id]);
+  res.status(200).json({
+    success:true,
+    message:'deleted successfully'
+  })
 }
