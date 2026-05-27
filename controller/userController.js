@@ -305,7 +305,7 @@ exports.getHistory=async(req,res)=>{
 try{
   const id = req.params.id;
 
-  const sql = `select u.id,u.name,b.weight,b.height_in_cm,b.bmi,b.bmi_status,b.record_date
+  const sql = `select u.id,u.name,b.id as bmirecordId, b.weight,b.height_in_cm,b.bmi,b.bmi_status,b.record_date
 from users u left join bmi_records b on u.id=b.user_id
 where u.id=? order by record_date desc`;
 
