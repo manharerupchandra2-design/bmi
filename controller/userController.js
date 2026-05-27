@@ -12,7 +12,7 @@ exports.createUser = async (req, res) => {
       inch,
       record_date
     } = req.body;
-    console.log(res.body);
+    console.log(req.body);
     const [checkUser] = await db.execute(
       "SELECT * FROM users WHERE mobile=?",
       [mobile]
@@ -239,7 +239,7 @@ exports.getAllUser = async (req, res) => {
     console.log(userList)
     if (userList.length === 0) {
       return res.status(200).json({
-        success: false,
+        success: true,
         message: "Empty List"
       })
     }
@@ -332,7 +332,7 @@ return res.status(200).json({
   })
 }
 }
-exports.deleteById = async (req, res) => {
+exports.deleteHistory = async (req, res) => {
   try {
 
     const id = req.params.id;
